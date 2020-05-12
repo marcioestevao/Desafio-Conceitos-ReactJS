@@ -7,7 +7,9 @@ function App() {
   const [repositories, setRepositories] = useState([]);
 
   useEffect(() => {
-    loadList();
+    api.get("repositories").then((response) => {
+      setRepositories(response.data);
+    });
   }, []);
 
   async function handleAddRepository() {
@@ -28,13 +30,12 @@ function App() {
 
   async function handleRemoveRepository(id) {
     api.delete("repositories/" + id);
-    loadList();
-  }
 
-  async function loadList() {
-    api.get("./repositories").then((response) => {
-      setRepositories(response.data);
-    });
+    //Retira da lista o itme deletado
+    const newState = repositories.filter((repository) => repository.id !== id);
+
+    //Atualiza o State com a lista atualizada
+    setRepositories(newState);
   }
 
   return (
